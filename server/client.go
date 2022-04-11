@@ -25,8 +25,12 @@ func (c *client) readInput() {
 		}
 
 		switch msg.msgType {
-		case "room":
+		case "Room":
 
 		}
 	}
+}
+
+func (c *client) msg(msg string) {
+	c.conn.WriteJSON(msg)
 }
