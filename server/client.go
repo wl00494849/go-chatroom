@@ -13,7 +13,7 @@ type client struct {
 	user     string
 	conn     *websocket.Conn
 	room     *room
-	commands chan<- string
+	commands chan<- command
 }
 
 func (c *client) readInput() {
@@ -26,7 +26,23 @@ func (c *client) readInput() {
 
 		switch msg.msgType {
 		case "Room":
-
+			c.commands <- command{
+				commandType: msg.msgType,
+				message:     msg.msg,
+				client:      c,
+			}
+		case "Msg":
+			c.commands <- command{
+				commandType: msg.msgType,
+				message:     msg.msg,
+				client:      c,
+			}
+		case "Quit":
+			c.commands <- command{
+				commandType: msg.msgType,
+				message:     msg.msg,
+				client:      c,
+			}
 		}
 	}
 }
