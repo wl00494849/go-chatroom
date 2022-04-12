@@ -69,7 +69,7 @@ func (s *server) joinRoom(c *client, id string) {
 	}
 	r.mambers[c.conn.RemoteAddr()] = c
 	c.room = r
-	c.room.broadcast(c, "歡迎"+c.user+"加入房間")
+	c.room.broadcast(c, fmt.Sprintf("Welcome %s join room", c.user))
 }
 func (s *server) sendMsg(c *client, msg string) {
 	if c.room == nil {
