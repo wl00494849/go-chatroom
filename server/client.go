@@ -1,6 +1,8 @@
 package server
 
 import (
+	"fmt"
+
 	"github.com/gorilla/websocket"
 )
 
@@ -19,10 +21,15 @@ type client struct {
 func (c *client) readInput() {
 	for {
 		var msg message
-		err := c.conn.ReadJSON(&msg)
+		_, msg, err := c.conn.ReadMessage()
 		if err != nil {
 			panic(err)
 		}
+
+		fmt.Printf("%s", msg.msgType)
+		fmt.Println()
+		fmt.Printf("%s", msg.msg)
+		fmt.Println()
 
 		switch msg.msgType {
 		case "Room":

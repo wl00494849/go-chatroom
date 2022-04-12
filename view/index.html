@@ -1,46 +1,79 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset=" utf-8">
-<title></title>
-<style type="text/css">
-  .left{
-    background-color: aqua;
-    border-style: solid;
-    border-color: black;
-    width: 69%;
-    height: 100%;
-    float: left;
-  }
-  .right{
-    border-style: solid;
-    border-color: black;
-    width: 29%;
-    height: 100%;
-    float: right;
-  }
-</style>
-<script> 
-</script>
+  <meta charset=" utf-8">
+  <title></title>
+  <style type="text/css">
+    .left {
+      overflow-y: auto;
+      border-style: solid;
+      border-color: black;
+      width: 69%;
+      height: 100%;
+      float: left;
+    }
+
+    .right {
+      border-style: solid;
+      border-color: black;
+      width: 29%;
+      height: 100%;
+      float: right;
+    }
+  </style>
+  <script>
+    var sock = null
+    var wsUrl = "ws://127.0.0.1:8080/ws"
+
+    function setTextEl(params) {
+      var el = document.getElementById("chat")
+      var p = document.createElement('p')
+      var t = document.createTextNode(params)
+      p.appendChild(t)
+      el.appendChild(p)
+    }
+
+    function createClient() {
+      var name = document.getElementById("cliName").value
+      var parameterUrl = wsUrl + "?name=" + name
+
+      sock = new WebSocket(parameterUrl)
+      sock.onopen = function () {
+        setTextEl("創建使用者:" + name + " 開啟連線")
+      }
+    }
+
+    function joinRoom() {
+      var roomName = document.getElementById("roomName").value
+      var j = {
+        msgType: "Room",
+        msg: roomName
+      }
+      sock.send(JSON.stringify(j))
+    }
+  </script>
 </head>
+
 <body>
+  <h1>歡迎使用聊天室</h1>
   <div style="width: 800px;height: 600px;">
-    <div class="left">
-      <h1>test</h1>
-      </div>
+    <div class="left" id="chat">
+    </div>
     <div class="right">
       <span>使用者名稱</span>
-      <input type="text" value="AnyOne">
-      <input type="button" value="創建使用者">
+      <input type="text" value="AnyOne" id="cliName">
+      <input type="button" value="創建使用者" onclick="createClient()">
       <br>
       <span>房間ID</span>
       <br>
-      <input type="text">
-      <input type="button" value="進入房間">
+      <input type="text" id="roomName">
+      <input type="button" value="進入房間" onclick="joinRoom()">
     </div>
   </div>
 
-<input type="text" style="width: 500px;float: left;">
-<input type="button" value="送出">
+  <input type="text" style="width: 500px;float: left;">
+  <input type="button" value="送出">
 </body>
+
 </html>
