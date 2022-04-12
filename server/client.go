@@ -48,5 +48,5 @@ func (c *client) readInput() {
 }
 
 func (c *client) msg(msg string) {
-	c.conn.WriteJSON(msg)
+	c.conn.WriteJSON(&message{msg: msg})
 }

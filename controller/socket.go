@@ -7,17 +7,12 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var servers = server.NewServer()
-
-func SocketPage(ctx *gin.Context) {
-	ctx.HTML(200, "./view/index.html", nil)
-}
-
 func CreateSocket(ctx *gin.Context) {
 	name := ctx.Query("name")
-	ws, err := websocket.Upgrade(ctx.Writer, ctx.Request, nil, 1024, 1024)
+	uparader := websocket.Upgrader{ReadBufferSize: 1024, WriteBufferSize: 1024}
+	ws, err := uparader.Upgrade(ctx.Writer, ctx.Request, nil)
 	if err != nil {
 		ctx.JSON(500, err)
 	}
-	servers.NewClient(ws, name)
+	server.GetChatServer().NewClient(ws, name)
 }

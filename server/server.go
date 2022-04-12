@@ -6,6 +6,8 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+var chatServer *server
+
 type command struct {
 	commandType string
 	client      *client
@@ -23,13 +25,22 @@ func NewServer() *server {
 	}
 }
 
+func ServerInit() {
+	chatServer = NewServer()
+	go chatServer.run()
+}
+
+func GetChatServer() *server {
+	return chatServer
+}
+
 func (s *server) run() {
 	for msg := range s.commands {
 		switch msg.commandType {
 		case "Room":
 			s.joinRoom(msg.client, msg.message)
 		case "Msg":
-			s.msg(msg.client, msg.message)
+			s.sendMsg(msg.client, msg.message)
 		case "Quit":
 			s.quit(msg.client, msg.message)
 		}
@@ -37,7 +48,7 @@ func (s *server) run() {
 }
 
 func (s *server) NewClient(ws *websocket.Conn, name string) {
-	ws.WriteJSON("New Client has Connection")
+	ws.WriteJSON(&message{msg: "New Client has Connection"})
 	c := &client{
 		conn:     ws,
 		user:     "AnyOne",
@@ -58,8 +69,11 @@ func (s *server) joinRoom(c *client, id string) {
 	r.mambers[c.conn.RemoteAddr()] = c
 	c.room = r
 }
-func (s *server) msg(c *client, msg string) {
-
+func (s *server) sendMsg(c *client, msg string) {
+	if c.room == nil {
+		c.conn.WriteJSON(&message{msg: "you not join any room"})
+	}
+	c.room.broadcast(c, msg)
 }
 
 func (s *server) quit(c *client, msg string) {
