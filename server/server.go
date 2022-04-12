@@ -50,6 +50,9 @@ func (s *server) run() {
 
 func (s *server) NewClient(ws *websocket.Conn, name string) {
 	ws.WriteJSON(&message{Msg: "New Client has Connection"})
+	if name == "" {
+		name = "AnyOne"
+	}
 	c := &client{
 		conn:     ws,
 		user:     name,
