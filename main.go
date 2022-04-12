@@ -27,5 +27,5 @@ func main() {
 	})
 	app.GET("/ws", controller.CreateSocket)
 
-	app.Run(":8080")
+	app.Run(port)
 }
