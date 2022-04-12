@@ -44,6 +44,7 @@ func (s *server) run() {
 			s.sendMsg(msg.client, msg.message)
 		case "Quit":
 			s.quit(msg.client, msg.message)
+		default:
 		}
 	}
 }
