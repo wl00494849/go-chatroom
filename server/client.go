@@ -20,6 +20,7 @@ type client struct {
 }
 
 func (c *client) readInput() {
+	defer c.conn.Close()
 	for {
 		msg := &message{}
 		_, b, err := c.conn.ReadMessage()

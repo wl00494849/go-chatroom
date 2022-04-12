@@ -19,16 +19,16 @@ type server struct {
 	commands chan command
 }
 
+func init() {
+	chatServer = NewServer()
+	go chatServer.run()
+}
+
 func NewServer() *server {
 	return &server{
 		rooms:    make(map[string]*room),
 		commands: make(chan command),
 	}
-}
-
-func ServerInit() {
-	chatServer = NewServer()
-	go chatServer.run()
 }
 
 func GetChatServer() *server {
@@ -72,7 +72,6 @@ func (s *server) joinRoom(c *client, id string) {
 	c.room.broadcast(c, "歡迎"+c.user+"加入房間")
 }
 func (s *server) sendMsg(c *client, msg string) {
-	fmt.Println(msg)
 	if c.room == nil {
 		c.conn.WriteJSON(&message{Msg: "you not join any room"})
 	}

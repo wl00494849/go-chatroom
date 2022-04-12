@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"go-chatroom/controller"
-	"go-chatroom/server"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -17,8 +16,6 @@ func main() {
 	if p := os.Getenv("PORT"); len(p) != 0 {
 		port = ":" + p
 	}
-
-	server.ServerInit()
 
 	app := gin.Default()
 	app.LoadHTMLGlob("view/*")
