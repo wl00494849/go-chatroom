@@ -40,7 +40,12 @@
 
       sock = new WebSocket(parameterUrl)
       sock.onopen = function () {
-        setTextEl("創建使用者:" + name + " 開啟連線")
+      setTextEl("創建使用者:" + name + " 開啟連線")
+      }
+      sock.onmessage = function (e) {
+        console.log("msg")
+        var obj = JSON.parse(e.data)
+        setTextEl(obj["msg"])
       }
     }
 
@@ -51,6 +56,17 @@
         msg: roomName
       }
       sock.send(JSON.stringify(j))
+      setTextEl("歡迎加入房間:" + roomName)
+    }
+
+    function setMsg() {
+      var msg = document.getElementById("msg")
+      var j = {
+        msgType: "Msg",
+        msg:msg.value
+      }
+      sock.send(JSON.stringify(j))
+      msg.value = ""
     }
   </script>
 </head>
@@ -72,8 +88,8 @@
     </div>
   </div>
 
-  <input type="text" style="width: 500px;float: left;">
-  <input type="button" value="送出">
+  <input id="msg" type="text" style="width: 500px;float: left;">
+  <input type="button" value="送出" onclick="setMsg()">
 </body>
 
 </html>

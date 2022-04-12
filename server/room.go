@@ -10,9 +10,7 @@ type room struct {
 }
 
 func (r *room) broadcast(sender *client, msg string) {
-	for addr, member := range r.mambers {
-		if addr != sender.conn.RemoteAddr() {
-			member.msg(msg)
-		}
+	for _, member := range r.mambers {
+		member.msg(msg)
 	}
 }

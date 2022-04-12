@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"net"
 
 	"github.com/gorilla/websocket"
@@ -48,10 +49,10 @@ func (s *server) run() {
 }
 
 func (s *server) NewClient(ws *websocket.Conn, name string) {
-	ws.WriteJSON(&message{msg: "New Client has Connection"})
+	ws.WriteJSON(&message{Msg: "New Client has Connection"})
 	c := &client{
 		conn:     ws,
-		user:     "AnyOne",
+		user:     name,
 		commands: s.commands,
 	}
 	c.readInput()
@@ -68,12 +69,14 @@ func (s *server) joinRoom(c *client, id string) {
 	}
 	r.mambers[c.conn.RemoteAddr()] = c
 	c.room = r
+	c.room.broadcast(c, "歡迎"+c.user+"加入房間")
 }
 func (s *server) sendMsg(c *client, msg string) {
+	fmt.Println(msg)
 	if c.room == nil {
-		c.conn.WriteJSON(&message{msg: "you not join any room"})
+		c.conn.WriteJSON(&message{Msg: "you not join any room"})
 	}
-	c.room.broadcast(c, msg)
+	c.room.broadcast(c, fmt.Sprintf("%s:%s", c.user, msg))
 }
 
 func (s *server) quit(c *client, msg string) {

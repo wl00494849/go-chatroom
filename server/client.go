@@ -1,14 +1,15 @@
 package server
 
 import (
-	"fmt"
+	"encoding/json"
 
 	"github.com/gorilla/websocket"
 )
 
 type message struct {
-	msg     string
-	msgType string
+	Msg     string `json:"msg"`
+	MsgType string `json:"msgType"`
+	User    string `json:"user"`
 }
 
 type client struct {
@@ -20,34 +21,31 @@ type client struct {
 
 func (c *client) readInput() {
 	for {
-		var msg message
-		_, msg, err := c.conn.ReadMessage()
+		msg := &message{}
+		_, b, err := c.conn.ReadMessage()
 		if err != nil {
 			panic(err)
 		}
 
-		fmt.Printf("%s", msg.msgType)
-		fmt.Println()
-		fmt.Printf("%s", msg.msg)
-		fmt.Println()
+		json.Unmarshal(b, &msg)
 
-		switch msg.msgType {
+		switch msg.MsgType {
 		case "Room":
 			c.commands <- command{
-				commandType: msg.msgType,
-				message:     msg.msg,
+				commandType: msg.MsgType,
+				message:     msg.Msg,
 				client:      c,
 			}
 		case "Msg":
 			c.commands <- command{
-				commandType: msg.msgType,
-				message:     msg.msg,
+				commandType: msg.MsgType,
+				message:     msg.Msg,
 				client:      c,
 			}
 		case "Quit":
 			c.commands <- command{
-				commandType: msg.msgType,
-				message:     msg.msg,
+				commandType: msg.MsgType,
+				message:     msg.Msg,
 				client:      c,
 			}
 		}
@@ -55,5 +53,5 @@ func (c *client) readInput() {
 }
 
 func (c *client) msg(msg string) {
-	c.conn.WriteJSON(&message{msg: msg})
+	c.conn.WriteJSON(&message{Msg: msg})
 }
