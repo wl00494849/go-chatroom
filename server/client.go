@@ -30,25 +30,10 @@ func (c *client) readInput() {
 
 		json.Unmarshal(b, &msg)
 
-		switch msg.MsgType {
-		case "Room":
-			c.commands <- command{
-				commandType: msg.MsgType,
-				message:     msg.Msg,
-				client:      c,
-			}
-		case "Msg":
-			c.commands <- command{
-				commandType: msg.MsgType,
-				message:     msg.Msg,
-				client:      c,
-			}
-		case "Quit":
-			c.commands <- command{
-				commandType: msg.MsgType,
-				message:     msg.Msg,
-				client:      c,
-			}
+		c.commands <- command{
+			commandType: msg.MsgType,
+			message:     msg.Msg,
+			client:      c,
 		}
 	}
 }
